@@ -1,5 +1,6 @@
 # Reads in player stats over the years and averages the stats without any weights.
 
+import sys
 import os
 import csv
 from array import array
@@ -114,6 +115,7 @@ def aggregatePlayerStats(players, minYear, currentYear):
 if __name__ == "__main__":
 	minYear = 2000
 	maxYear = 2017
+	print(sys.argv)
 
 	print "gathering player data"
 	players = getPlayerStats(2000, 2017)

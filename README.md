@@ -25,3 +25,7 @@ Hand, Age
 To generate training data:
 1) Look at the matches and for a match in the training years, aggregate the players stats up to that match unweighted and weighted to generate the proper array.
 Don't forget to subtract to get the proper vector.
+
+Some things:
+-Hand effect. Look at hand and see the weight. Weigh things more for certain hands
+-Surface effect.

@@ -59,36 +59,42 @@ def aggregatePlayerStats(matches, minYear, testingYear):
 	averageStats = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 	for i in range(0, len(statsSum)):
 		averageStats[i] = statsSum[i]/count
-	
+
 	return averageStats
 
 def generateTrainingData(players, minYear, testingYear):
 	cwd = os.getcwd()
 	input = cwd + "/features/atp_matches_1990-2017.csv"
 
-	# cwd = os.getcwd()
-	# output = cwd + "/features/trainingData" + str(minYear) + "-" + str(testingYear-1) + "UW.csv"
+	cwd = os.getcwd()
+	output = cwd + "/features/uwTrainingData" + str(minYear) + "-" + str(testingYear-1) + ".csv"
 
-	# with open(output, 'w') as f_out:
-	# 	f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("name", "ht", "rank", "rank_points", "ace", "df", "svpt", "firstIn", "firstWon", "secondWon", "SvGms", "bpSaved", "bpFaced"))
+	with open(output, 'w') as f_out:
+		f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("htDiff", "ageDiff", "rankDiff", "rank_pointsDiff", "aceDiff", "dfDiff", "svptDiff", "firstInDiff", "firstWonDiff", "secondWonDiff", "SvGmsDiff", "bpSavedDiff", "bpFacedDiff", "result"))
 
-	with open(input, 'r') as f_in:
-		reader = csv.DictReader(f_in)
-		for match in reader:
-			if timeToDays(match["tourney_date"]) < timeToDays(str(testingYear*10000)) and timeToDays(match["tourney_date"]) >= timeToDays(str(minYear*10000)):
-				name1 = match["name1"]; name2 = match["name2"]
-				player1AverageStats = aggregatePlayerStats(players[name1], minYear, testingYear)
-				player2AverageStats = aggregatePlayerStats(players[name2], minYear, testingYear)
+		with open(input, 'r') as f_in:
+			reader = csv.DictReader(f_in)
+			matchCounter = 0
 
-				statsDiff = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-				for i in range(0, len(player1AverageStats)):
-					if match["result"] == "1":
-						statsDiff[i] = player1AverageStats - player2AverageStats
-					else:
-						statsDiff[i] = player2AverageStats - player1AverageStats
+			for match in reader:
+				if timeToDays(match["tourney_date"]) < timeToDays(str(testingYear*10000)) and timeToDays(match["tourney_date"]) >= timeToDays(str(minYear*10000)):
 
-				#concat with match info then write to file
+					player1AverageStats = aggregatePlayerStats(players[match["name1"]], minYear, testingYear)
+					player2AverageStats = aggregatePlayerStats(players[match["name2"]], minYear, testingYear)
 
+					statsDiff = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+					for i in range(0, len(player1AverageStats)):
+						if match["result"] == "1":
+							statsDiff[i] = player1AverageStats[i] - player2AverageStats[i]
+						else:
+							statsDiff[i] = player2AverageStats[i] - player1AverageStats[i]
+
+					f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (str(statsDiff[0]), str(float(match["age1"]) - float(match["age2"])), str(statsDiff[1]), str(statsDiff[2]), str(statsDiff[3]), str(statsDiff[4]), str(statsDiff[5]), str(statsDiff[6]), str(statsDiff[7]), str(statsDiff[8]), str(statsDiff[9]), str(statsDiff[10]), str(statsDiff[11]), match["result"]))
+
+					if matchCounter % 1000 == 0 and matchCounter != 0: print "Generated training data for: " + str(matchCounter) + " matches"
+					matchCounter += 1
+
+			print "Generated training data for: " + str(matchCounter) + " matches"
 
 if __name__ == "__main__":
 	if len(sys.argv) != 3:

@@ -1,6 +1,7 @@
 # Cleans data and converts positive labeled matches to negative labled matches
 # Removes statistics that will not be used
 
+import sys
 import os
 import csv
 
@@ -107,8 +108,12 @@ def clean(year, path, f_out):
 				invert = 0
 
 if __name__ == "__main__":
-	minYear = 2000
-	maxYear = 2017
+	if len(sys.argv) != 3:
+		print "Error: Please specify", "minYear", "maxYear"
+		exit(0)
+
+	minYear = int(sys.argv[1])
+	maxYear = int(sys.argv[2])
 
 	os.chdir("..")
 	cwd = os.getcwd()

@@ -5,12 +5,10 @@ import os
 import csv
 from array import array
 
-#pk,name1,name2,seed1,seed2,hand1,hand2,ht1,ht2,age1,age2,rank1,rank2,rank_points1,rank_points2,ace1,ace2,df1,df2,svpt1,svpt2,firstIn1,firstIn2,firstWon1,firstWon2,secondWon1,secondWon2,SvGms1,SvGms2,bpSaved1,bpSaved2,bpFaced1,bpFaced2,surface,tourney_date,result
-
 def getPlayerStats(): 
 	os.chdir("..")
 	cwd = os.getcwd()
-	input = cwd + "/features/atp_matches_2000-2017.csv"
+	input = cwd + "/features/atp_matches_1990-2017.csv"
 
 	players = {}
 
@@ -38,91 +36,58 @@ def timeToDays(time):
 
 	return float(year)*365 + float(month)*30.42 + float(day)
 
-def aggregatePlayerStats(players, minYear, testingYear):
-	cwd = os.getcwd()
-	output = cwd + "/features/trainingData" + str(minYear) + "-" + str(testingYear-1) + "UW.csv"
+def aggregatePlayerStats(matches, minYear, testingYear):
+	statsSum = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	count = 0.0
 
-	with open(output, 'w') as f_out:
-		f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("name", "ht", "rank", "rank_points", "ace", "df", "svpt", "firstIn", "firstWon", "secondWon", "SvGms", "bpSaved", "bpFaced"))
+	for match in matches:
+		if timeToDays(match["tourney_date"]) < timeToDays(str(testingYear*10000)) and timeToDays(match["tourney_date"]) >= timeToDays(str(minYear*10000)):
+			statsSum[0] += float(match["ht"])
+			statsSum[1] += float(match["rank"])
+			statsSum[2] += float(match["rank_points"])
+			statsSum[3] += float(match["ace"])
+			statsSum[4] += float(match["df"])
+			statsSum[5] += float(match["svpt"])
+			statsSum[6] += float(match["firstIn"])
+			statsSum[7] += float(match["firstWon"])
+			statsSum[8] += float(match["secondWon"])
+			statsSum[9] += float(match["SvGms"])
+			statsSum[10] += float(match["bpSaved"])
+			statsSum[11] += float(match["bpFaced"])
+			count += 1
 
-		for player in players:
-			values = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-			statsSum = array("f", values)
-			statsCount = array("f", values)
-
-			for match in players[player]:
-				if timeToDays(match["tourney_date"]) < timeToDays(str(testingYear*10000)) and timeToDays(match["tourney_date"]) >= timeToDays(str(minYear*10000)):
-					if float(match["ht"]) != 0:
-						statsSum[0] += float(match["ht"])
-						statsCount[0] += 1.0
-
-					if float(match["rank"]) != 0:
-						statsSum[1] += float(match["rank"])
-						statsCount[1] += 1.0
-
-					if float(match["rank_points"]) != 0:
-						statsSum[2] += float(match["rank_points"])
-						statsCount[2] += 1.0
-
-					if float(match["ace"]) != 0:
-						statsSum[3] += float(match["ace"])
-						statsCount[3] += 1.0
-
-					if float(match["df"]) != 0:
-						statsSum[4] += float(match["df"])
-						statsCount[4] += 1.0
-
-					if float(match["svpt"]) != 0:
-						statsSum[5] += float(match["svpt"])
-						statsCount[5] += 1.0
-
-					if float(match["firstIn"]) != 0:
-						statsSum[6] += float(match["firstIn"])
-						statsCount[6] += 1.0
-
-					if float(match["firstWon"]) != 0:
-						statsSum[7] += float(match["firstWon"])
-						statsCount[7] += 1.0
-
-					if float(match["secondWon"]) != 0:
-						statsSum[8] += float(match["secondWon"])
-						statsCount[8] += 1.0
-
-					if float(match["SvGms"]) != 0:
-						statsSum[9] += float(match["SvGms"])
-						statsCount[9] += 1.0
-
-					if float(match["bpSaved"]) != 0:
-						statsSum[10] += float(match["bpSaved"])
-						statsCount[10] += 1.0
-
-					if float(match["bpFaced"]) != 0:
-						statsSum[11] += float(match["bpFaced"])
-						statsCount[11] += 1.0
-
-			averageStats = [0.0] * 12
-			for i in range(0, len(statsSum)):
-				if statsCount[i] != 0.0:
-					averageStats[i] = statsSum[i]/statsCount[i]
-				else:
-					averageStats[i] = 0.0
-
-			if sum(statsCount) != 0:		
-				f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (player, str(averageStats[0]), str(averageStats[1]), str(averageStats[2]), str(averageStats[3]), str(averageStats[4]), str(averageStats[5]), str(averageStats[6]), str(averageStats[7]), str(averageStats[8]), str(averageStats[9]), str(averageStats[10]), str(averageStats[11])))
+	averageStats = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	for i in range(0, len(statsSum)):
+		averageStats[i] = statsSum[i]/count
+	
+	return averageStats
 
 def generateTrainingData(players, minYear, testingYear):
 	cwd = os.getcwd()
-	input = cwd + "/features/atp_matches_2000-2017.csv"
+	input = cwd + "/features/atp_matches_1990-2017.csv"
+
+	# cwd = os.getcwd()
+	# output = cwd + "/features/trainingData" + str(minYear) + "-" + str(testingYear-1) + "UW.csv"
+
+	# with open(output, 'w') as f_out:
+	# 	f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("name", "ht", "rank", "rank_points", "ace", "df", "svpt", "firstIn", "firstWon", "secondWon", "SvGms", "bpSaved", "bpFaced"))
 
 	with open(input, 'r') as f_in:
 		reader = csv.DictReader(f_in)
 		for match in reader:
 			if timeToDays(match["tourney_date"]) < timeToDays(str(testingYear*10000)) and timeToDays(match["tourney_date"]) >= timeToDays(str(minYear*10000)):
 				name1 = match["name1"]; name2 = match["name2"]
-				player1AverageStats = aggregatePlayerStats(players[name1])
-				player2AverageStats = aggregatePlayerStats(players[name2])
+				player1AverageStats = aggregatePlayerStats(players[name1], minYear, testingYear)
+				player2AverageStats = aggregatePlayerStats(players[name2], minYear, testingYear)
 
-				#subtract them, concat with match info, write out to file
+				statsDiff = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+				for i in range(0, len(player1AverageStats)):
+					if match["result"] == "1":
+						statsDiff[i] = player1AverageStats - player2AverageStats
+					else:
+						statsDiff[i] = player2AverageStats - player1AverageStats
+
+				#concat with match info then write to file
 
 
 if __name__ == "__main__":
@@ -138,6 +103,3 @@ if __name__ == "__main__":
 
 	print "aggregating player data for matches"
 	generateTrainingData(players, minYear, testingYear)
-
-	# print 'generating unweighted training data for year', str(testingYear)
-	# aggregatePlayerStats(players, minYear, testingYear)

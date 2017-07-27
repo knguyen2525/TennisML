@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
 		for year in range(minYear, maxYear):
 			print "cleaning data for year", str(year)
-			path = cwd + "/data/atp_matches_" + str(year) + ".csv"
+			path = cwd + "/tennis_atp/atp_matches_" + str(year) + ".csv"
 			result = clean(int(year), path, f_out)
 			matchCounter += result
 

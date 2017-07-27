@@ -13,12 +13,6 @@ round = round_of
 3 = clay
 4 = carpet
 
-Ideas:
-Upset factor
-Time decay
-Common opponents
-Surface factor
-
 Stats that should not be aggregated for players:
 Hand, Age
 
@@ -27,5 +21,15 @@ To generate training data:
 Don't forget to subtract to get the proper vector.
 
 Some things:
--Hand effect. Look at hand and see the weight. Weigh things more for certain hands
--Surface effect.
+-Surface effect 
+-weak player vs weak player stats padding
+-common opponents
+-upset factor?
+-gen testing data ----
+-gen training data ----
+-head to head balancing ----
+-hand effect ----
+
+Thoughts:
+-Use head to head as a weight? It will make more sense for players that havent played each other often
+-The idea is if two players played each other alot then its easy to predict how they will do. If they havent, we need to connect them somehow via common opponents

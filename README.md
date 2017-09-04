@@ -13,6 +13,11 @@ round = round_of
 3 = clay
 4 = carpet
 
+70-30 split at 1990-2008, 2008-2017
+20550 matches in testing
+48738 matches in training
+
+
 Stats that should not be aggregated for players:
 Hand, Age
 

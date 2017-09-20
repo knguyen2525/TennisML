@@ -1,10 +1,9 @@
-# Has functions that generate all weights to be considered
-
 # Generates a weight factor based on time from the current match
-def getTimeWeight(matchTime, maxTime):
+def getTimeWeight(matchTime, currentMatchTime):
 	timeHyperParameter = 0.9999
-	return timeHyperParameter ** (int(maxTime) - int(matchTime))
+	return timeHyperParameter ** (int(currentMatchTime) - int(matchTime))
 
 # Returns all weights to be used on match data
-def getWeightFactor(matchTime, maxTime):
-	return getTimeWeight(matchTime, maxTime)
+def getWeightFactor(match, playersMatches, minYear, currentMatchTime):
+	timeWeight = getTimeWeight(match["tourney_date"], currentMatchTime)
+	return timeWeight

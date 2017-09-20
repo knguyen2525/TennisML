@@ -79,10 +79,10 @@ def writeMatchData(row, player1, player2, result, f_out):
 	# 2 = grass
 	# 3 = clay
 	# 4 = carpet
-	if row["surface"] == "Hard": surface = 1
-	elif row["surface"] == "Grass": surface = 2
-	elif row["surface"] == "Clay": surface = 3
-	elif row["surface"] == "Carpet": surface = 4
+	if row["surface"] == "Hard": surface = "hard"
+	elif row["surface"] == "Grass": surface = "grass"
+	elif row["surface"] == "Clay": surface = "clay"
+	elif row["surface"] == "Carpet": surface = "carpet"
 	else: return 0
 
 	# Get the date of the tourney

@@ -26,6 +26,16 @@ def getPlayerMatchData(match, playerNum):
 
 	return playerMatchData
 
+# Extracts the surface from a given match for player 1 and 2 in a match
+def getPlayerSurfaceData(match, playerNum):
+	playerSurfaceData = {"surface": match["surface"], "tourney_date": match["tourney_date"]}
+
+	# Quick math to see if player won that match based on match result and playerNum 1 or 2
+	if int(playerNum) + int(match["result"]) == 2: playerSurfaceData["win"] = "1"
+	else: playerSurfaceData["win"] = "0"
+
+	return playerSurfaceData
+
 # Generates a player object where players are linked to matches he has played as well as his stats for that match
 def getPlayerStats(cleanedAtpMatches): 
 	players = {}
@@ -46,5 +56,14 @@ def getPlayerStats(cleanedAtpMatches):
 			if players.get(match["name2"]) is None: players[match["name2"]] = []
 			playerMatchData  = getPlayerMatchData(match, "2")
 			players[match["name2"]].append(playerMatchData)
+
+			# Index player surface data to save time in feature creation later
+			if players.get(match["name1"] + "_" + match["surface"]) is None: players[match["name1"] + "_" + match["surface"]] = []
+			playerSurfaceData = getPlayerSurfaceData(match, "1")
+			players[match["name1"] + "_" + match["surface"]].append(playerSurfaceData)
+
+			if players.get(match["name2"] + "_" + match["surface"]) is None: players[match["name2"] + "_" + match["surface"]] = []
+			playerSurfaceData = getPlayerSurfaceData(match, "2")
+			players[match["name2"] + "_" + match["surface"]].append(playerSurfaceData)
 
 	return players

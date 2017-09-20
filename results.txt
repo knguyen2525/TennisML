@@ -1,0 +1,24 @@
+70967 matches after cleaning
+
+1990-2008 unweighted
+48738 matches
+
+2008-2018 unweighted
+20550 matches
+
+1990-2008 weighted. Weights = time(0.9999)
+48738 matches
+
+2008-2018 weighted. Weights = time(0.9999)
+20550 matches
+
+unweighted:
+0.676399026764
+
+weighted:
+0.681897810219 (time=0.9999)
+
+Other:
+Adding breakpoints lost raised it for unweighted but lowered it for weighted
+
+69147 total features

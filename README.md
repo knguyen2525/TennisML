@@ -17,24 +17,37 @@ round = round_of
 20550 matches in testing
 48738 matches in training
 
-
-Stats that should not be aggregated for players:
-Hand, Age
-
-To generate training data:
-1) Look at the matches and for a match in the training years, aggregate the players stats up to that match unweighted and weighted to generate the proper array.
-Don't forget to subtract to get the proper vector.
-
-Some things:
--Surface effect 
--weak player vs weak player stats padding
--common opponents
--upset factor?
--gen testing data ----
--gen training data ----
+Features:
+-Time weighing ----
+-Basic stats ----
+-Surface effect ----
 -head to head balancing ----
 -hand effect ----
+-Number of times broken ----
+-weak player vs weak player stats padding
+-avg rank per round?
+-service game prowess
 
-Thoughts:
--Use head to head as a weight? It will make more sense for players that havent played each other often
--The idea is if two players played each other alot then its easy to predict how they will do. If they havent, we need to connect them somehow via common opponents
+Training/Testing:
+-Feature extraction
+-Logistic regression and stacking (knn, decision tree, perceptron, and try others)
+	1991+ has data we want
+	rolling k folds cross validation
+	use entire training set to make predictions on test for each model. Keep as features for lr
+	train 1987-1990, test 1990-1993
+	train 1990-1993, test 1993-1996
+	train 1990-1996, test 1996-1999
+	train 1990-1999, test 1999-2002
+	train 1990-2002, test 2002-2005
+	train 1990-2005, test 2005-2008
+
+	We are losing some data for initial training
+
+	train 1994-2008 with base models. Predict on 2008-2017. Save predictions
+	stacking model train on 1994-2008 with base model predictions. Predict on testing set with base model predictions 
+
+
+-Roll through data to make folds
+-Exhaustive grid search for hyper parameters
+
+

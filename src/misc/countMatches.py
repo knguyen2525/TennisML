@@ -1,7 +1,12 @@
 # Counts number of matches given input files
 
-import sys
 import csv
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--minYear", default=1990, help="Min year for cleaning data")
+parser.add_argument("--maxYear", default=2017, help="Max year for cleaning data")
+args = parser.parse_args()
 
 def countMatches(inputFile):
 	matchCount = 0
@@ -14,13 +19,11 @@ def countMatches(inputFile):
 	return matchCount
 
 if __name__ == "__main__":
-	if len(sys.argv) != 3:
-		print "Error: Please specify", "'minYear'", "'maxYear'"
-		exit(0)
-
+	print args
+	
 	# Specifying year of matches we are interested in
-	minYear = int(sys.argv[1])
-	maxYear = int(sys.argv[2])
+	minYear = int(args.minYear)
+	maxYear = int(args.maxYear)
 
 	# Prepare the output file
 	home = "/Users/kevinnguyen/Projects/tennisml"

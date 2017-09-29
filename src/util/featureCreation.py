@@ -1,13 +1,50 @@
 # Holds functions responsible for aggregating player stats within a time period
 # Takes care of weighing stats based on certain factors (time, surface, hand)
 
+import csv
 from array import array
 from timeUtil import isDateInRange
 from generateWeights import getWeightFactor
 
+# Loops through matches and generates features for each match in cleaned data
+def createFeatures(inputFile, minYear, maxYear, featureType, players):
+	features = []
+
+	# Reading in match data from cleaned data
+	with open(inputFile, 'r') as f_in:
+		reader = csv.DictReader(f_in)
+
+		# For each match, aggregate player stats based on previous matches and output feature vector for that match
+		print "aggregating player data and generating features"
+		for match in reader:
+			if isDateInRange(match["tourney_date"], minYear * 10000, maxYear * 10000):
+				# Aggregating general player stats. Also weighs if weighted parameter is passed in
+				player1AggStats = aggregate(players[match["name1"]], match["surface"], minYear, match["tourney_date"], featureType)
+				player2AggStats = aggregate(players[match["name2"]], match["surface"], minYear, match["tourney_date"], featureType)
+
+				# If could not find any stats before the current match then jump to next loop iteration
+				if player1AggStats == 0 or player2AggStats == 0: continue
+
+				# Find the difference between the two stats vectors
+				statsDiff = findStatsDifference(player1AggStats, player2AggStats)
+
+				# Find other stats such as player hands and head to head
+				handDiff = getHandDifference(match["hand1"], match["hand2"])
+				h2hDiff = getHeadToHeadDifference(match["name1"], match["name2"], players[match["name1"]], players[match["name2"]], minYear, match["tourney_date"])
+
+				featureVector = [int(match["tourney_date"]), str(statsDiff[0]), str(float(match["age1"]) - float(match["age2"])), str(statsDiff[1]), str(statsDiff[2]), str(statsDiff[3]), str(statsDiff[4]), str(statsDiff[5]), str(statsDiff[6]), str(statsDiff[7]), str(statsDiff[8]), str(statsDiff[9]), str(statsDiff[10]), str(statsDiff[11]), str(statsDiff[12]), str(statsDiff[13]), str(statsDiff[14]), str(handDiff), str(h2hDiff), match["result"]]
+				features.append(featureVector)
+
+				if len(features) % 1000 == 0 and len(features) != 0: print "generated feature vectors for: " + str(len(features)) + " matches"
+
+		print "generated feature vectors for: " + str(len(features)) + " matches"
+		
+	f_in.close()
+	return features
+
 # Given a players matches, creates average stats vector for a player
 def aggregate(playersMatches, matchSurface, minYear, currentMatchTime, featureType):
-	statsSum = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	statsSum = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 	weightSum = 0.0
 	surfaceWinWeightCount = 0.0
 	surfaceMatchWeightSum = 0.0
@@ -39,6 +76,9 @@ def aggregate(playersMatches, matchSurface, minYear, currentMatchTime, featureTy
 			# Break points lost stats
 			statsSum[12] += wfactor * float(int(match["bpFaced"]) - int(match["bpSaved"]))
 
+			# Service aptitude
+			statsSum[13] += wfactor * float(int(match["firstWon"]) + int(match["secondWon"]) - int(match["bpFaced"])) / float(match["svpt"])
+
 			# Surface stats
 			surfaceWin, surfaceMatch = getSurfaceStats(matchSurface, match)
 			surfaceWinWeightCount += wfactor * surfaceWin
@@ -50,7 +90,7 @@ def aggregate(playersMatches, matchSurface, minYear, currentMatchTime, featureTy
 	if weightSum == 0.0: return 0
 
 	# Get the average of all the stats found
-	averageStats = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	averageStats = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 	for i in range(0, len(statsSum)):
 		averageStats[i] = statsSum[i] / weightSum
 
@@ -62,7 +102,7 @@ def aggregate(playersMatches, matchSurface, minYear, currentMatchTime, featureTy
 
 # Takes the difference of states between two players averages
 def findStatsDifference(player1AverageStats, player2AverageStats):
-	statsDiff = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	statsDiff = array("f", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 	for i in range(0, len(player1AverageStats)):
 		statsDiff[i] = player1AverageStats[i] - player2AverageStats[i]
 

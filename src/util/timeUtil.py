@@ -6,7 +6,7 @@ def isDateInRange(matchDate, minTime, maxTime):
 
 # Turns a given date to time in days
 def timeToDays(time):
-	year = time[:4]
-	month = time[4:-2]
-	day = time[-2:]
-	return float(year)*365 + float(month)*30.42 + float(day)
+	year = float(str(time)[:4])
+	month = float(str(time)[4:-2])
+	day = float(str(time)[-2:])
+	return year*365 + month*30.42 + day

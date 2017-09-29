@@ -18,6 +18,9 @@ round = round_of
 48738 matches in training
 
 Features:
+-HEY, TESTING DATA SHOULDNT USE MATCHES IN TRAINING DATA WHEN YOU AGGREGATE. Actually this is fine.
+-HEY, TIME DISCOUNT SHOULD BE ONE FOR TESTING DATA AS WELL
+-Player experience
 -Time weighing ----
 -Basic stats ----
 -Surface effect ----

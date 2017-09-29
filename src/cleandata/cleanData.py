@@ -2,8 +2,13 @@
 # Matches are usually from the perspective of the winner in the raw data so this script takes half the matches
 # and reverses the perspective to have an equal number of matches from the winner's perspective and loser's perspective
 
-import sys
 import csv
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--minYear", default=1990, help="Min year for cleaning data")
+parser.add_argument("--maxYear", default=2017, help="Max year for cleaning data")
+args = parser.parse_args()
 
 # Extracts row data and inverts data from a positive to negative labels on half the rows
 # Writes output to file
@@ -24,19 +29,19 @@ def writeMatchData(row, player1, player2, result, f_out):
 
 	# Get player's heights
 	ht1 = row[player1 + "_ht"]; ht2 = row[player2 + "_ht"]
-	if not ht1 or not ht2: return 0
+	if not ht1 or not ht2 or ht1 == "0" or ht2 == "0": return 0
 
 	# Get player's ages
 	age1 = row[player1 + "_age"]; age2 = row[player2 + "_age"]
-	if not age1 or not age2: return 0
+	if not age1 or not age2 or age1 == "0" or age2 == "0": return 0
 
 	# Get player's ages
 	rank1 = row[player1 + "_rank"]; rank2 = row[player2 + "_rank"]
-	if not rank1 or not rank2: return 0
+	if not rank1 or not rank2  or rank1 == "0" or rank2 == "0": return 0
 
 	# Get player's rank points
 	rank_points1 = row[player1 + "_rank_points"]; rank_points2 = row[player2 + "_rank_points"]
-	if not rank_points1 or not rank_points2: return 0
+	if not rank_points1 or not rank_points2  or rank_points1 == "0" or rank_points2 == "0": return 0
 
 	# Get player's aces
 	ace1 = row[player1[:1] + "_ace"]; ace2 = row[player2[:1] + "_ace"]
@@ -48,7 +53,7 @@ def writeMatchData(row, player1, player2, result, f_out):
 
 	# Get player's number of service points
 	svpt1 = row[player1[:1] + "_svpt"]; svpt2 = row[player2[:1] + "_svpt"]
-	if not svpt1 or not svpt2: return 0
+	if not svpt1 or not svpt2 or svpt1 == "0" or svpt2 == "0": return 0
 
 	# Get player's number of first serves in
 	firstIn1 = row[player1[:1] + "_1stIn"]; firstIn2 = row[player2[:1] + "_1stIn"]
@@ -64,7 +69,7 @@ def writeMatchData(row, player1, player2, result, f_out):
 
 	# Get number of service games for each player
 	SvGms1 = row[player1[:1] + "_SvGms"]; SvGms2 = row[player2[:1] + "_SvGms"]
-	if not SvGms1 or not SvGms2: return 0
+	if not SvGms1 or not SvGms2 or SvGms1 == "0" or SvGms2 == "0": return 0
 
 	# Get number of breakpoints saved by each player
 	bpSaved1 = row[player1[:1] + "_bpSaved"]; bpSaved2 = row[player2[:1] + "_bpSaved"]
@@ -88,6 +93,10 @@ def writeMatchData(row, player1, player2, result, f_out):
 	# Get the date of the tourney
 	tourney_date = row["tourney_date"]
 	if not tourney_date: return 0
+
+	# Check if match ended normally
+	score = row["score"].strip()
+	if score[-1:] != ")" and not score[-1:].isdigit(): return 0
 
 	# Write stats out to file
 	f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (pk, name1, name2, hand1, hand2, ht1, ht2, age1, age2, rank1, rank2, rank_points1, rank_points2, ace1, ace2, df1, df2, svpt1, svpt2, firstIn1, firstIn2, firstWon1, firstWon2, secondWon1, secondWon2, SvGms1, SvGms2, bpSaved1, bpSaved2, bpFaced1, bpFaced2, surface, tourney_date, result))
@@ -118,17 +127,15 @@ def clean(inputFile, f_out):
 	return matchCounter
 
 if __name__ == "__main__":
-	if len(sys.argv) != 3:
-		print "Error: Please specify", "'minYear'", "'maxYear'"
-		exit(0)
-
+	print args
+	
 	# Specifying year of matches we are interested in
-	minYear = int(sys.argv[1])
-	maxYear = int(sys.argv[2])
+	minYear = int(args.minYear)
+	maxYear = int(args.maxYear)
 
 	# Prepare the output file
 	home = "/Users/kevinnguyen/Projects/tennisml"
-	outputFile = home + "/data/cleanedData/cleanedAtpMatches_" + str(minYear) + "-" + str(maxYear) + ".csv"
+	outputFile = home + "/data/cleanedData/cleaned_" + str(minYear) + "_" + str(maxYear) + ".csv"
 
 	# Counter to keep track of matches obtained from cleaning
 	matchCounter = 0

@@ -1,13 +1,19 @@
 import numpy as np
 
 # Sets the predictions for the base models for the current test fold
-def setPredictionsTrain(foldIDs, data, baseModelPredictionsTrain, currTestFold, model, currentModelIndex):
+def setPredictionsTrain(foldIDs, data, labels, baseModelPredictionsTrain, currTestFold, model, currentModelIndex):
+	numCorrectPredictions = 0
+	numPredictions = 0
 	for i in range(0, data.shape[0]):
 		if foldIDs[i] == currTestFold:
 			#use row to predict a 1 or 0, set data last column i as the 1 or 0
-			baseModelPredictionsTrain[i][currentModelIndex] = model.predict(data[i].reshape(1, -1))
+			prediction = model.predict(data[i].reshape(1, -1))
+			baseModelPredictionsTrain[i][currentModelIndex] = prediction
+			if prediction == labels[i]:
+				numCorrectPredictions += 1
+			numPredictions += 1
 
-	return baseModelPredictionsTrain
+	return baseModelPredictionsTrain, numCorrectPredictions, numPredictions
 
 # Sets the predictions for the base models on the test data
 def setPredictionsTest(testingFileInput, models):

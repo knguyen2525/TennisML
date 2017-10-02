@@ -57,13 +57,13 @@ def getPlayerStats(cleanedAtpMatches):
 			playerMatchData  = getPlayerMatchData(match, "2")
 			players[match["name2"]].append(playerMatchData)
 
-			# Index player surface data to save time in feature creation later
-			if players.get(match["name1"] + "_" + match["surface"]) is None: players[match["name1"] + "_" + match["surface"]] = []
-			playerSurfaceData = getPlayerSurfaceData(match, "1")
-			players[match["name1"] + "_" + match["surface"]].append(playerSurfaceData)
+			# # Index player surface data to save time in feature creation later
+			# if players.get(match["name1"] + "_" + match["surface"]) is None: players[match["name1"] + "_" + match["surface"]] = []
+			# playerSurfaceData = getPlayerSurfaceData(match, "1")
+			# players[match["name1"] + "_" + match["surface"]].append(playerSurfaceData)
 
-			if players.get(match["name2"] + "_" + match["surface"]) is None: players[match["name2"] + "_" + match["surface"]] = []
-			playerSurfaceData = getPlayerSurfaceData(match, "2")
-			players[match["name2"] + "_" + match["surface"]].append(playerSurfaceData)
+			# if players.get(match["name2"] + "_" + match["surface"]) is None: players[match["name2"] + "_" + match["surface"]] = []
+			# playerSurfaceData = getPlayerSurfaceData(match, "2")
+			# players[match["name2"] + "_" + match["surface"]].append(playerSurfaceData)
 
 	return players

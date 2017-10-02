@@ -2,7 +2,6 @@ from sklearn.model_selection import GridSearchCV
 from sklearn import linear_model
 from sklearn import neighbors
 from sklearn import ensemble
-from sklearn import naive_bayes
 from sklearn import tree
 from sklearn import svm
 
@@ -47,8 +46,8 @@ def trainModels(data, labels):
 	print "Training perceptron"
 	perceptron_model = trainPerceptron(data, labels)
 
-	print "Training k-nearest neighbors"
-	knn_model = trainKnn(data, labels)
+	# print "Training k-nearest neighbors"
+	# knn_model = trainKnn(data, labels)
 
 	print "Training random forest"
 	random_forest_model = trainRandomForest(data, labels)
@@ -56,19 +55,19 @@ def trainModels(data, labels):
 	print "Training gradient boosting"
 	gradient_boosting_model = trainGradientBoosting(data, labels)
 
-	print "Training decision tree"
-	decisionTree_model = trainDecisionTree(data, labels)
+	# print "Training decision tree"
+	# decisionTree_model = trainDecisionTree(data, labels)
 
-	print "Training svm"
-	svm_model = trainSVM(data, labels)
+	# print "Training svm"
+	# svm_model = trainSVM(data, labels)
 
 	models = list()
 	models.append(perceptron_model)
-	models.append(knn_model)
+	# models.append(knn_model)
 	models.append(random_forest_model)
 	models.append(gradient_boosting_model)
-	models.append(decisionTree_model)
-	models.append(svm_model)
+	# models.append(decisionTree_model)
+	# models.append(svm_model)
 
 	return models
 

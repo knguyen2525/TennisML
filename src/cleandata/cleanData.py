@@ -156,23 +156,3 @@ if __name__ == "__main__":
 		print "Matches found from cleaning: " + str(matchCounter)
 
 	f_out.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

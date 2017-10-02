@@ -9,12 +9,11 @@ from featureSelection import voteOnFeatures
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--trainingFile", default="weighted_1990_2018_training.csv", help="File with training data")
-parser.add_argument("--testingFile", default="weighted_1990_2018_testing.csv", help="File with testing data")
+parser.add_argument("--trainingFile", default="weighted_1990_2017_training.csv", help="File with training data")
+parser.add_argument("--testingFile", default="weighted_1990_2017_testing.csv", help="File with testing data")
 parser.add_argument("--numFolds", default=10, help="Number of data folds")
 parser.add_argument("--numBaseModels", default=3, help="Number of base models")
-parser.add_argument("--pvp", default=False, help="Train models for pvp")
-parser.add_argument("--keep", default=10, help="K-best features to keep")
+parser.add_argument("--keep", default=16, help="K-best features to keep")
 args = parser.parse_args()
 
 # Give different sections of data fold IDs to handle "rolling" training
@@ -127,7 +126,6 @@ if __name__ == "__main__":
 		print "Creating predictions for test fold", currTestFold
 		# Get training set based on test fold
 		tempTrainData, tempTrainLabels = getTrainingSet(foldIDs, data, labels, currTestFold)
-		print len(tempTrainData), len(tempTrainData[0])
 
 		# Train models based on training set
 		models = trainModels(tempTrainData, tempTrainLabels)
@@ -153,31 +151,30 @@ if __name__ == "__main__":
 		print "Average Accuracy: " + str(float(accuracySums[i])/float(count))
 
 	print "---------------------------------"
+	print "Prepping training data"
+	# Delete the rows for fold 0 that were used to predict fold 1
+	trainData, trainLabels, baseModelPredictionsTrain = deleteFirstFoldRows(data, labels, baseModelPredictionsTrain, foldSize)
 
-	# print "Prepping training data"
-	# # Delete the rows for fold 0 that were used to predict fold 1
-	# trainData, trainLabels, baseModelPredictionsTrain = deleteFirstFoldRows(data, labels, baseModelPredictionsTrain, foldSize)
+	# Create the training set with original features and predictions from base models
+	trainingDataset = np.concatenate((trainData, baseModelPredictionsTrain), axis=1)
 
-	# # Create the training set with original features and predictions from base models
-	# trainingDataset = np.concatenate((trainData, baseModelPredictionsTrain), axis=1)
+	print "Prepping testing data"
+	# Now train base models on entire training set to predict testing set
+	models = trainModels(data, labels)
 
-	# print "Prepping testing data"
-	# # Now train base models on entire training set to predict testing set
-	# models = trainModels(data, labels)
+	# Set the predictions matrix for the test data
+	testData, testLabels, baseModelPredictionsTest = setPredictionsTest(testingFileInput, models, bestFeatureIndices)
+	testingDataset = np.concatenate((testData, baseModelPredictionsTest), axis=1)
 
-	# # Set the predictions matrix for the test data
-	# testData, testLabels, baseModelPredictionsTest = setPredictionsTest(testingFileInput, models)
-	# testingDataset = np.concatenate((testData, baseModelPredictionsTest), axis=1)
-
-	# print "================================="
-	# print "Printing base model accuracies"
-	# printBaseModelAccuracy(trainData, trainLabels, testData, testLabels)
+	print "================================="
+	print "Printing base model accuracies"
+	printBaseModelAccuracy(trainData, trainLabels, testData, testLabels)
 	
-	# print "================================="
-	# print "Training and testing stacked model"
-	# # Train stacked model and predict
-	# clr = trainStackedModel(trainingDataset, trainLabels)
-	# testStackedModel(clr, testingDataset, testLabels)
+	print "================================="
+	print "Training and testing stacked model"
+	# Train stacked model and predict
+	clr = trainStackedModel(trainingDataset, trainLabels)
+	testStackedModel(clr, testingDataset, testLabels)
 
 
 

@@ -16,7 +16,7 @@ def setPredictionsTrain(foldIDs, data, labels, baseModelPredictionsTrain, currTe
 	return baseModelPredictionsTrain, numCorrectPredictions, numPredictions
 
 # Sets the predictions for the base models on the test data
-def setPredictionsTest(testingFileInput, models):
+def setPredictionsTest(testingFileInput, models, bestFeatureIndices):
 	data = np.genfromtxt(testingFileInput, skip_header=1, delimiter=",")
 
 	# Separate labels from data
@@ -24,6 +24,8 @@ def setPredictionsTest(testingFileInput, models):
 	data = np.delete(data, np.s_[-1:], axis=1)
 	#Delete date column
 	data = np.delete(data, np.s_[0:1], axis=1)
+
+	data = data[:, bestFeatureIndices]
 
 	baseModelPredictionsTest = np.zeros(shape=(data.shape[0], len(models)))
 

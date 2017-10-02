@@ -11,10 +11,10 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--minYear", default=1990, help="Min year for cleaning data")
-parser.add_argument("--maxYear", default=2018, help="Max year for cleaning data")
+parser.add_argument("--maxYear", default=2017, help="Max year for cleaning data")
 parser.add_argument("--cleanedAtpMatches", default="cleaned_1990_2017.csv", help="File with cleaned data")
 parser.add_argument("--type", default="weighted", help="Weighted or unweighted features")
-parser.add_argument("--pvp", default=False, help="Create features for all or 70/30 split")
+parser.add_argument("--pvp", default=True, help="Create features for all or 70/30 split")
 args = parser.parse_args()
 
 if __name__ == "__main__":
@@ -38,8 +38,6 @@ if __name__ == "__main__":
 	# Sorting features by tourney date
 	print "Sorting features by tourney_date"
 	sortedFeatures = np.array(sorted(features))
-
-	
 
 	# Finding training/testing split 70/30
 	numTrainingFeatures = int(math.ceil(0.7 * len(features))) - 1

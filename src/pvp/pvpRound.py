@@ -62,6 +62,7 @@ if __name__ == "__main__":
 	clr = allModels["stackedModels"]
 	bestFeatureIndices = allModels["bestFeatureIndices"]
 
+	# Creating variables
 	correct = 0
 	total = 0
 	predictions = []
@@ -75,27 +76,31 @@ if __name__ == "__main__":
 		for match in reader:
 			if match["tourney_id"] == args.tourneyID and match["round"] == args.round and match["name1"] in players and match["name2"] in players:
 
+				# Get latest feature vector for each player in each match
 				print "generating feature vector"
 				featureVector = getFeatureVector(players, match)
 				if not isinstance(featureVector, basestring) and featureVector == 0:
 					continue
 
-				featureVector = np.array(featureVector)
-				featureVector = np.reshape(featureVector, (1, 18))
+				# Pick top features
+				featureVector = np.reshape(np.array(featureVector), (1, 18))
 				featureVector = featureVector[:, bestFeatureIndices]
 
+				# Make base model predictions for feature vector
 				baseModelPredictions = []
 				for i in range(0, len(models)):
 					prediction = models[i].predict(featureVector[0].reshape(1, -1))
 					baseModelPredictions.append(prediction)
 
+				# Concat base model predictions to feature vector
 				baseModelPredictions = np.reshape(baseModelPredictions, (1, len(models)))
 				finalVector = np.concatenate((featureVector, baseModelPredictions), axis=1)
 
+				# Make prediction on match
 				finalPrediction = clr.predict(finalVector)
-
 				predictionProbability = clr.predict_proba(finalVector)
 
+				# Store prediction outcome correctness
 				if finalPrediction[0] == 1:
 					if match["result"] == "1": correct += 1
 					else: wrongPredictions.append(match["name1"] + " is predicted to win with " + str(predictionProbability[0][1] * 100) + " chance vs " + match["name2"])

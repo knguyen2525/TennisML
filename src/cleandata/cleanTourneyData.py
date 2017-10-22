@@ -41,14 +41,16 @@ def writeMatchData(row, player1, player2, result, f_out):
 	tourney_id = row["tourney_id"]
 	if not tourney_id: return 0
 
+	# Get tourney name
+	tourney_name = row["tourney_name"]
+	if not tourney_name: return 0
+
 	# Get round
 	round = row["round"]
 	if not round: return 0
 
 	# Write stats out to file
-	f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (name1, name2, hand1, hand2, age1, age2, surface, tourney_date, tourney_id, round, result))
-
-	f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("name1", "name2", "hand1", "hand2", "age1", "age2", "surface", "tourney_date", "tourney_id", "round", "result"))
+	f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (name1, name2, hand1, hand2, age1, age2, surface, tourney_date, tourney_id, round, tourney_name, result))
 
 	return 1
 
@@ -92,7 +94,7 @@ if __name__ == "__main__":
 	# Opening output stream
 	with open(outputFile, 'w') as f_out:
 		# Writing header file for cleaned data
-		f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("name1", "name2", "hand1", "hand2", "age1", "age2", "surface", "tourney_date", "tourney_id", "round", "result"))
+		f_out.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % ("name1", "name2", "hand1", "hand2", "age1", "age2", "surface", "tourney_date", "tourney_id", "round", "tourney_name", "result"))
 
 		# For each year we are interested in, create a path for the file and clean the data
 		# Keep a count of the number of matches cleaned

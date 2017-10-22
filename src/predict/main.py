@@ -9,8 +9,8 @@ from featureSelection import voteOnFeatures
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--trainingFile", default="weighted_1990_2017_training.csv", help="File with training data")
-parser.add_argument("--testingFile", default="weighted_1990_2017_testing.csv", help="File with testing data")
+parser.add_argument("--trainingFile", default="weighted_1990_2018_training.csv", help="File with training data")
+parser.add_argument("--testingFile", default="weighted_1990_2018_testing.csv", help="File with testing data")
 parser.add_argument("--numFolds", default=10, help="Number of data folds")
 parser.add_argument("--numBaseModels", default=3, help="Number of base models")
 parser.add_argument("--keep", default=16, help="K-best features to keep")
